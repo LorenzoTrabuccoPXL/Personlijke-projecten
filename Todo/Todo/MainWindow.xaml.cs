@@ -19,9 +19,9 @@ namespace Todo
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Todos> _todos = new List<Todos>();
+        List<TodoItem> _todos = new List<TodoItem>();
         string _bestandPad = "Todos.json";
-        Todos _todo = new Todos();
+        TodoItem _todo = new TodoItem();
 
         public MainWindow()
         {
@@ -30,7 +30,7 @@ namespace Todo
             omschrijvingChangeStackPanel.Visibility = Visibility.Collapsed;
             // Zet het opgeslagen bestand om naar een list van todos 
             string json = File.ReadAllText(_bestandPad);
-            _todos = JsonSerializer.Deserialize<List<Todos>>(json) ?? new List<Todos>();
+            _todos = JsonSerializer.Deserialize<List<TodoItem>>(json) ?? new List<TodoItem>();
             AssignTodos();
         }
 
@@ -42,13 +42,13 @@ namespace Todo
                 && deadlineDatepicker.SelectedDate > DateTime.Today 
                 && !string.IsNullOrWhiteSpace(omschrijvingTextBox.Text))
             {
-                _todo.name = nameTextBox.Text;
-                _todo.omschrijving = omschrijvingTextBox.Text;
-                _todo.deadlineDate = (DateTime)deadlineDatepicker.SelectedDate;
+                _todo.Title = nameTextBox.Text;
+                _todo.Description = omschrijvingTextBox.Text;
+                _todo.DueDate = (DateTime)deadlineDatepicker.SelectedDate;
 
                 var selectedSatus = (ComboBoxItem)statusComboBox.SelectedItem;
                 string status = selectedSatus.Content.ToString();
-                _todo.status = status;
+                _todo.Status = status;
 
                 _todos.Add(_todo);
                 AssignTodos();
@@ -60,9 +60,9 @@ namespace Todo
             SaveList();
             ClearListBoxes();
             //Vult de listboxes
-            foreach (Todos todo in _todos)
+            foreach (TodoItem todo in _todos)
             {
-                switch (todo.status.ToString())
+                switch (todo.Status.ToString())
                 {
                     case "todo":
                         todoListBox.Items.Add(todo);
@@ -96,13 +96,13 @@ namespace Todo
             if (sender.SelectedItem == null)
                 return;
 
-            _todo = (Todos)sender.SelectedItem;
-            infoTextBlock.Text = $"deadline: {_todo.deadlineDate}\n\n{_todo.omschrijving}";
+            _todo = (TodoItem)sender.SelectedItem;
+            infoTextBlock.Text = $"deadline: {_todo.DueDate}\n\n{_todo.Description}";
         }
 
-        private void AddToListBox(Todos todo, string status)
+        private void AddToListBox(TodoItem todo, string status)
         {
-            todo.status = status;
+            todo.Status = status;
             SaveList();
             AssignTodos();
         }
@@ -136,33 +136,33 @@ namespace Todo
             {
                 if (doingListBox.SelectedItem != null)
                 {
-                    AddToListBox((Todos)doingListBox.SelectedItem, "todo");
+                    AddToListBox((TodoItem)doingListBox.SelectedItem, "todo");
                 }
                 else if (doneListBox.SelectedItem != null)
                 {
-                    AddToListBox((Todos)doneListBox.SelectedItem, "todo");
+                    AddToListBox((TodoItem)doneListBox.SelectedItem, "todo");
                 }
             }
             else if (sender == doingAddButton)
             {
                 if (todoListBox.SelectedItem != null)
                 {
-                    AddToListBox((Todos)todoListBox.SelectedItem, "doing");
+                    AddToListBox((TodoItem)todoListBox.SelectedItem, "doing");
                 }
                 else if (doneListBox.SelectedItem != null)
                 {
-                    AddToListBox((Todos)doneListBox.SelectedItem, "doing");
+                    AddToListBox((TodoItem)doneListBox.SelectedItem, "doing");
                 }
             }
             else
             {
                 if (todoListBox.SelectedItem != null)
                 {
-                    AddToListBox((Todos)todoListBox.SelectedItem, "done");
+                    AddToListBox((TodoItem)todoListBox.SelectedItem, "done");
                 }
                 else if (doingListBox.SelectedItem != null)
                 {
-                    AddToListBox((Todos)doingListBox.SelectedItem, "done");
+                    AddToListBox((TodoItem)doingListBox.SelectedItem, "done");
                 }
             }
         }
@@ -172,15 +172,15 @@ namespace Todo
             //Verwijdert het item uit de geselecteerde listbox
             if(todoListBox.SelectedItem != null)
             {
-                _todos.Remove((Todos)todoListBox.SelectedItem);
+                _todos.Remove((TodoItem)todoListBox.SelectedItem);
             }
             else if(doingListBox.SelectedItem != null)
             {
-                _todos.Remove((Todos)doingListBox.SelectedItem);
+                _todos.Remove((TodoItem)doingListBox.SelectedItem);
             }
             else if(doneListBox.SelectedItem != null)
             {
-                _todos.Remove((Todos)doneListBox.SelectedItem);
+                _todos.Remove((TodoItem)doneListBox.SelectedItem);
             }
             AssignTodos();
         }
@@ -199,9 +199,9 @@ namespace Todo
             omschrijvingChangeStackPanel.Visibility = Visibility.Collapsed;
         }
 
-        private void ChangeOmschrijvingTodo(Todos todo)
+        private void ChangeOmschrijvingTodo(TodoItem todo)
         {
-            todo.omschrijving = omschrijvingChangeTextBox.Text;
+            todo.Description = omschrijvingChangeTextBox.Text;
             AssignTodos();
         }
 
@@ -209,15 +209,15 @@ namespace Todo
         {
             if (todoListBox.SelectedItem != null)
             {
-                ChangeOmschrijvingTodo((Todos)todoListBox.SelectedItem);
+                ChangeOmschrijvingTodo((TodoItem)todoListBox.SelectedItem);
             }
             else if (doingListBox.SelectedItem != null)
             {
-                ChangeOmschrijvingTodo((Todos)doingListBox.SelectedItem);
+                ChangeOmschrijvingTodo((TodoItem)doingListBox.SelectedItem);
             }
             else if (doneListBox.SelectedItem != null)
             {
-                ChangeOmschrijvingTodo((Todos)doneListBox.SelectedItem);
+                ChangeOmschrijvingTodo((TodoItem)doneListBox.SelectedItem);
             }
             omschrijvingChangeStackPanel.Visibility = Visibility.Collapsed;
         }

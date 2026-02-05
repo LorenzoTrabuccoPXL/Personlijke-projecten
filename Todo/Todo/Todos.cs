@@ -4,18 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Todo
+namespace Todo //
 {
-    class Todos
+    public enum TodoStatus 
     {
-        public string name { get; set; }
-        public string omschrijving { get; set; }
-        public DateTime deadlineDate { get; set; }
-        public string status { get; set; }
+        Todo,
+        InProgress,
+        Done
+    }
+
+    class TodoItem
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public DateTime DueDate { get; set; }
+        public TodoStatus Status { get; set; }
 
         public override string ToString()
         {
-            return name;
+            return Title;
         }
     }
 }

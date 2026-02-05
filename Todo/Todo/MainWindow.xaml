@@ -13,7 +13,7 @@
                 <MenuItem Header="Change omschrijving"/>
             </MenuItem>
         </Menu>
-        <TabControl DockPanel.Dock="Top">
+        <TabControl>
             <TabItem Header="Home">
                 <Grid x:Name="Grid1">
                     <Grid.Background>

@@ -21,16 +21,21 @@ namespace Todo
     {
         List<TodoItem> _todos = new List<TodoItem>();
         string _bestandPad = "Todos.json";
-        TodoItem _todo = new TodoItem();
+        
 
         public MainWindow()
         {
             InitializeComponent();
-            deadlineDatepicker.DisplayDateStart = DateTime.Today;
+            deadlineDatepicker.SelectedDate = DateTime.Today;
             omschrijvingChangeStackPanel.Visibility = Visibility.Collapsed;
+            
+            
             // Zet het opgeslagen bestand om naar een list van todos 
+            // TODO: logica verplaatsen naar aparte klasse            
             string json = File.ReadAllText(_bestandPad);
             _todos = JsonSerializer.Deserialize<List<TodoItem>>(json) ?? new List<TodoItem>();
+
+
             AssignTodos();
         }
 
@@ -42,16 +47,21 @@ namespace Todo
                 && deadlineDatepicker.SelectedDate > DateTime.Today 
                 && !string.IsNullOrWhiteSpace(omschrijvingTextBox.Text))
             {
-                _todo.Title = nameTextBox.Text;
-                _todo.Description = omschrijvingTextBox.Text;
-                _todo.DueDate = (DateTime)deadlineDatepicker.SelectedDate;
+                TodoItem newTodoItem = new TodoItem();
+                newTodoItem.Title = nameTextBox.Text;
+                newTodoItem.Description = omschrijvingTextBox.Text;
+                newTodoItem.DueDate = (DateTime)deadlineDatepicker.SelectedDate;
 
-                var selectedSatus = (ComboBoxItem)statusComboBox.SelectedItem;
-                string status = selectedSatus.Content.ToString();
-                _todo.Status = status;
+                //var selectedSatus = (ComboBoxItem)statusComboBox.SelectedItem;
+                //string status = selectedSatus.Content.ToString();
+                newTodoItem.Status = (TodoStatus)statusComboBox.SelectedIndex;
 
-                _todos.Add(_todo);
+                _todos.Add(newTodoItem);
                 AssignTodos();
+            }
+            else
+            {
+                MessageBox.Show("Vul alle velden in en selecteer een datum in de toekomst");
             }
         }
 
@@ -62,12 +72,12 @@ namespace Todo
             //Vult de listboxes
             foreach (TodoItem todo in _todos)
             {
-                switch (todo.Status.ToString())
+                switch (todo.Status.ToString().ToLower())
                 {
                     case "todo":
                         todoListBox.Items.Add(todo);
                         break;
-                    case "doing":
+                    case "inprogress":
                         doingListBox.Items.Add(todo);
                         break;
                     case "done":
@@ -77,6 +87,7 @@ namespace Todo
             } 
         }
 
+        //TODO: logica verplaatsen naar aparte klasse
         private void SaveList()
         {
             string jsonOpslaan = JsonSerializer.Serialize(_todos, new JsonSerializerOptions { WriteIndented = true });
@@ -90,23 +101,31 @@ namespace Todo
             doingListBox.Items.Clear();
             doneListBox.Items.Clear();
         }
-       
-        private void ShowInfo(ListBox sender)
+
+        //private void ShowInfo(ListBox sender)
+        //{
+        //    if (sender.SelectedItem == null)
+        //        return;
+
+        //    Todo _todo = (TodoItem)sender.SelectedItem;
+        //    infoTextBlock.Text = $"deadline: {_todo.DueDate}\n\n{_todo.Description}";
+        //}
+        private void ShowInfo(TodoItem todo)
         {
-            if (sender.SelectedItem == null)
+            if (todo == null)
                 return;
 
-            _todo = (TodoItem)sender.SelectedItem;
-            infoTextBlock.Text = $"deadline: {_todo.DueDate}\n\n{_todo.Description}";
+            infoTextBlock.Text = $"deadline: {todo.DueDate}\n\n{todo.Description}";
         }
 
-        private void AddToListBox(TodoItem todo, string status)
+        private void AddToListBox(TodoItem todo, TodoStatus status)
         {
             todo.Status = status;
             SaveList();
             AssignTodos();
         }
 
+        // TODO: Dit werkt niet 100% correct, drag&drop zou beter werken in dit scenario
         private void ListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //deselecteerd de andere listboxitems
@@ -125,7 +144,7 @@ namespace Todo
                 todoListBox.SelectedItem = null;
                 doneListBox.SelectedItem = null;
             }
-            ShowInfo((ListBox)sender);
+            ShowInfo(((ListBox)sender).SelectedItem as TodoItem);
         }
 
 
@@ -136,33 +155,33 @@ namespace Todo
             {
                 if (doingListBox.SelectedItem != null)
                 {
-                    AddToListBox((TodoItem)doingListBox.SelectedItem, "todo");
+                    AddToListBox((TodoItem)doingListBox.SelectedItem, TodoStatus.Todo);
                 }
                 else if (doneListBox.SelectedItem != null)
                 {
-                    AddToListBox((TodoItem)doneListBox.SelectedItem, "todo");
+                    AddToListBox((TodoItem)doneListBox.SelectedItem, TodoStatus.Todo);
                 }
             }
             else if (sender == doingAddButton)
             {
                 if (todoListBox.SelectedItem != null)
                 {
-                    AddToListBox((TodoItem)todoListBox.SelectedItem, "doing");
+                    AddToListBox((TodoItem)todoListBox.SelectedItem, TodoStatus.InProgress);
                 }
                 else if (doneListBox.SelectedItem != null)
                 {
-                    AddToListBox((TodoItem)doneListBox.SelectedItem, "doing");
+                    AddToListBox((TodoItem)doneListBox.SelectedItem, TodoStatus.InProgress);
                 }
             }
             else
             {
                 if (todoListBox.SelectedItem != null)
                 {
-                    AddToListBox((TodoItem)todoListBox.SelectedItem, "done");
+                    AddToListBox((TodoItem)todoListBox.SelectedItem, TodoStatus.Done);
                 }
                 else if (doingListBox.SelectedItem != null)
                 {
-                    AddToListBox((TodoItem)doingListBox.SelectedItem, "done");
+                    AddToListBox((TodoItem)doingListBox.SelectedItem, TodoStatus.Done);
                 }
             }
         }

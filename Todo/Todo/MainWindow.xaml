@@ -1,0 +1,87 @@
+﻿<Window x:Class="Todo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Todo"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="file" Click="Omschrijving_Click">
+                <MenuItem Header="Delete todo" Click="DeleteTodo_Click"/>
+                <MenuItem Header="Change omschrijving"/>
+            </MenuItem>
+        </Menu>
+        <TabControl DockPanel.Dock="Top">
+            <TabItem Header="Home">
+                <Grid x:Name="Grid1">
+                    <Grid.Background>
+                        <SolidColorBrush Color="LightGoldenrodYellow"/>
+                    </Grid.Background>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <Label Content="Todo" FontWeight="Bold" HorizontalContentAlignment="Center"></Label>
+                        <ListBox x:Name="todoListBox" Margin="10 0" Height="150" SelectionChanged="ListBoxSelectionChanged"/>
+                        <Button x:Name="todoAddButton" Content="Add to todo" Margin="10" Padding="5" Click="AddToButton_Click"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <Label Content="Doing" FontWeight="Bold" HorizontalContentAlignment="Center"></Label>
+                        <ListBox x:Name="doingListBox" Margin="10 0" Height="150" SelectionChanged="ListBoxSelectionChanged"/>
+                        <Button x:Name="doingAddButton" Content="Add to Doing" Margin="10" Padding="5" Click="AddToButton_Click"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <Label Content="Done" FontWeight="Bold" HorizontalContentAlignment="Center"></Label>
+                        <ListBox x:Name="doneListBox" Margin="10 0" Height="150" SelectionChanged="ListBoxSelectionChanged"/>
+                        <Button x:Name="doneAddButton" Content="Add to Done" Margin="10" Padding="5" Click="AddToButton_Click"/>
+                    </StackPanel>
+                    <TextBlock x:Name="infoTextBlock" Height="130" Margin="10" Grid.ColumnSpan="3" VerticalAlignment="Bottom" />
+                    <StackPanel x:Name="omschrijvingChangeStackPanel" Height="150" Margin="10" Grid.ColumnSpan="3" VerticalAlignment="Bottom">
+                        <Label Content="Verander omschrijving" FontWeight="Bold" HorizontalAlignment="Center"></Label>
+                        <TextBox x:Name="omschrijvingChangeTextBox" Height="100"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="cancelbutton" Content="Cancel" Margin="5" Click="cancelbutton_Click"></Button>
+                            <Button x:Name="changebutton" Content="Bevestig" Margin="5" Click="changebutton_Click"></Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Add todo">
+                <Grid>
+                    <Grid.Background>
+                        <SolidColorBrush Color="LightGoldenrodYellow"/>
+                    </Grid.Background>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <Label Content="Naam:" Margin="10" FontWeight="Bold"/>
+                        <TextBox x:Name="nameTextBox" Grid.Column="1" Margin="10"/>
+                        <Label Content="Status" Margin="10" FontWeight="Bold"/>
+                        <ComboBox Name="statusComboBox" Margin="10">
+                            <ComboBoxItem Content="todo"/>
+                            <ComboBoxItem Content="doing"/>
+                            <ComboBoxItem Content="done"/>
+                        </ComboBox>
+                        <Label Content="Deadline" Margin="10" FontWeight="Bold"/>
+                        <DatePicker Name="deadlineDatepicker" Margin="10"></DatePicker>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="10">
+                        <Label Content="Omschrijving" Margin="0 0 0 20" HorizontalContentAlignment="Center" FontWeight="Bold"/>
+                        <Border BorderBrush="Black" BorderThickness="1">
+                            <TextBox x:Name="omschrijvingTextBox" Height="250" Background="White" AcceptsReturn="True" TextWrapping="Wrap"/>
+                        </Border>
+                        <Button x:Name="addTodoButton" Content="Add todo" HorizontalAlignment="Center" Padding="5" Margin="10" Click="addTodoButton_Click"/>
+                    </StackPanel>
+                    
+                </Grid>
+            </TabItem>
+        </TabControl>
+        
+    </DockPanel>
+</Window>
